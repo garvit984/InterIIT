@@ -672,7 +672,7 @@ def generate_routes(request):
     vehicleId = []
     for i in vehicles:
         vehicleId.append(int(i))
-    return render(request,'generatedRoutes.html',{'route':test,'veh1': datap['vehicle_key'][0],'vehicleId':vehicleId})
+    return render(request,'generatedRoutes_copy.html',{'route':test,'veh1': datap['vehicle_key'][0],'vehicleId':vehicleId})
 
 
 
