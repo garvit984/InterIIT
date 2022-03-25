@@ -62,7 +62,6 @@
             for (i = 1; i < value.length - 1; i++) {
                 var lat = value[i][0];
                 var long = value[i][1];
-                {#addMarker({lat: parseInt(lat), lng: parseInt(long)}, "yellow");#}
                 waypts.push({
                     location: new google.maps.LatLng(lat, long),
                     stopover: true
@@ -112,7 +111,7 @@
           //store the marker object drawn in global array
           markersArray.push(marker);
         }
-    document.getElementById('get').onclick = function () {
+        window.onload = function () {
         calRoute();
     };
 

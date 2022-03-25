@@ -394,6 +394,7 @@ def create_distance_matrix(data):
     max_rows = max_elements // num_addresses
     # num_addresses = q * max_rows + r (q = 2 and r = 4 in this example).
     q, r = divmod(num_addresses, max_rows)
+    print(q, r)
     dest_addresses = addresses
     distance_matrix = []
     # Send q requests, returning max_rows rows per request.
@@ -568,6 +569,7 @@ def generate_routes(request):
     cap_diff = total_veh_cap-total_bin_cap
 
     # Create the routing index manager.
+    print(len(datap['distance_matrix']),datap['num_vehicles'])
     manager = pywrapcp.RoutingIndexManager(len(datap['distance_matrix']),
                                            datap['num_vehicles'], datap['depot'])
 
@@ -807,10 +809,9 @@ def get_bin_address_test():
         long = (float(db.child("Bin").child(i).child("longitude").get().val()))
         print(i, height)
         try:
-            data = db.child("BinPerLevel").child(i).child(str(date.today())).get().val()
+            data = db.child("BinPerLevel").child(i).get().val()
             print(data)
-            last = next(reversed(data))
-            height2 = db.child("BinPerLevel").child(i).child(str(date.today())).child(last).child("height").get().val()
+            height2 = database.child("BinPerLevel").child(i).child("height").get().val()
             print("here", height2)
             perc = (float(height2) / float(height)) * 100
             print(perc)
@@ -832,54 +833,16 @@ def get_bin_address_test():
 def generate_routes_test(request):
     data = {}
     data['API_key'] = 'AIzaSyCaM7OEQuiInvSo0h8M0CHgLphQJ-a_pr8'
-    # data['addresses'] = ['19.312251,72.8513579',  # depot
-    #                      '19.3844215,72.8221597',
-    #                      '19.3084312,72.8489729',
-    #                      '19.3834291,72.8280696',
-    #                      '19.3834291,72.8280696',
-    #                      '19.2813741,72.8559049',
-    #                      '19.2527913,72.8506576',
-    #                      '19.2813741,72.8559049',
-    #                      '19.2864772,72.8486726',
-    #                      '19.2794676,72.8775643',
-    #                      '19.3726195,72.8255362',
-    #                      '19.3726195,72.8255362',
-    #                      '19.3726195,72.8255362',
-    #                      '19.3720507,72.8268628',
-    #                      '19.3720507,72.8268628',
-    #                      '19.3720419,72.8268988',
-    #                      ]
-    # data['addresses'] = ['19.8597909,75.3091889']
     data['addresses'] = get_depot_location()
     bin_addr = get_bin_address_test()
+    print("Bin Addresses:",bin_addr)
     data['addresses']  = data['addresses'] + bin_addr
     print("addr",data['addresses'])
     """Solve the CVRP problem."""
-
     """Stores the data for the problem."""
     datap = {}
     datap['distance_matrix'] = create_distance_matrix(data)
     print("dm", datap['distance_matrix'])
-
-    # datap['distance_matrix'] = [
-    #     [0, 31895, 878, 31603, 31603, 5342, 5342, 5342, 3010, 5834, 33590, 33590, 33590, 33821, 33821, 33821],
-    #     [32453, 0, 32024, 999, 999, 29059, 29059, 29059, 31272, 26481, 2985, 2985, 2985, 3217, 3217, 3217],
-    #     [878, 32094, 0, 31803, 31803, 4913, 4913, 4913, 2581, 6033, 33789, 33789, 33789, 34020, 34020, 34020],
-    #     [32453, 1359, 32023, 0, 0, 29058, 29058, 29058, 31271, 26480, 1986, 1986, 1986, 2218, 2218, 2218],
-    #     [32453, 1359, 32023, 0, 0, 29058, 29058, 29058, 31271, 26480, 1986, 1986, 1986, 2218, 2218, 2218],
-    #     [5258, 29590, 4828, 29298, 29298, 0, 0, 0, 4076, 3026, 31285, 31285, 31285, 31516, 31516, 31516],
-    #     [5258, 29590, 4828, 29298, 29298, 0, 0, 0, 4076, 3026, 31285, 31285, 31285, 31516, 31516, 31516],
-    #     [5258, 29590, 4828, 29298, 29298, 0, 0, 0, 4076, 3026, 31285, 31285, 31285, 31516, 31516, 31516],
-    #     [3481, 31233, 3052, 30942, 30942, 4052, 4052, 4052, 0, 5172, 32928, 32928, 32928, 33160, 33160, 33160],
-    #     [5972, 26678, 5543, 26387, 26387, 2577, 2577, 2577, 4791, 0, 28373, 28373, 28373, 28605, 28605, 28605],
-    #     [34313, 2611, 33883, 2294, 2294, 30918, 30918, 30918, 33131, 28340, 0, 0, 0, 511, 511, 511],
-    #     [34313, 2611, 33883, 2294, 2294, 30918, 30918, 30918, 33131, 28340, 0, 0, 0, 511, 511, 511],
-    #     [34313, 2611, 33883, 2294, 2294, 30918, 30918, 30918, 33131, 28340, 0, 0, 0, 511, 511, 511],
-    #     [34219, 2517, 33789, 2200, 2200, 30824, 30824, 30824, 33037, 28247, 511, 511, 511, 0, 0, 0],
-    #     [34219, 2517, 33789, 2200, 2200, 30824, 30824, 30824, 33037, 28247, 511, 511, 511, 0, 0, 0],
-    #     [34219, 2517, 33789, 2200, 2200, 30824, 30824, 30824, 33037, 28247, 511, 511, 511, 0, 0, 0],
-    # ]
-    #datap['demands'] = [0, 1, 1, 4, 4, 2, 4, 8, 8, 1, 2, 1, 2, 4, 4, 8, 8]
     datap['demands'] = [0]
     for l in range(len(bin_addr)):
         bin_addr[l] = bin_addr[l].replace(".",'-')
@@ -888,7 +851,6 @@ def generate_routes_test(request):
     datap['demands'] = datap['demands']+ get_bin_cap_test(bin_addr)
     total_bin_cap = sum(datap['demands'])
     print("demands", datap['demands'])
-    #datap['vehicle_capacities'], datap['vehicle_key'] = [15,15,15,15],[1,2,3,4]
     datap['vehicle_capacities'],datap['vehicle_key'] = get_vehicle_capacities_test()
     total_veh_cap = sum(datap['vehicle_capacities'])
     print("veh_cap", datap['vehicle_capacities'])
@@ -902,7 +864,7 @@ def generate_routes_test(request):
     manager = pywrapcp.RoutingIndexManager(len(datap['distance_matrix']),
                                            datap['num_vehicles'], datap['depot'])
 
-
+    print("hello")
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
 
