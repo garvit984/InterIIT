@@ -25,3 +25,5 @@ six
 SQLite3Database
 sqlparse
 urllib3
+gunicorn
+whitenoise
